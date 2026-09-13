@@ -19,7 +19,6 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "@google/generative-ai": "^0.24.1",
     "cloudinary": "^2.5.1",
     "cors": "^2.8.5",
     "dotenv": "^16.4.7",
@@ -28,6 +27,7 @@
     "express-validator": "^7.2.1",
     "firebase-admin": "^14.4.0",
     "google-auth-library": "^9.15.1",
+    "groq-sdk": "^1.6.0",
     "helmet": "^8.0.0",
     "jsonwebtoken": "^9.0.2",
     "mongoose": "^8.9.6",
