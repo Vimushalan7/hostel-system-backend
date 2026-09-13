@@ -2,13 +2,14 @@ const { GoogleGenerativeAI, SchemaType } = require('@google/generative-ai');
 
 // Use the API key from environment variables. 
 // If not present, AI classification will fail gracefully.
-const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY || '');
+const apiKey = process.env.GEMINI_API_KEY || process.env.AI_API_KEY || '';
+const genAI = new GoogleGenerativeAI(apiKey);
 
 const { CATEGORIES, PRIORITIES } = require('../models/Complaint');
 
 exports.classifyComplaint = async (title, description) => {
-  if (!process.env.GEMINI_API_KEY) {
-    throw new Error('GEMINI_API_KEY is not configured');
+  if (!apiKey) {
+    throw new Error('GEMINI_API_KEY or AI_API_KEY is not configured');
   }
 
   const model = genAI.getGenerativeModel({
