@@ -18,7 +18,7 @@ const notificationSchema = new mongoose.Schema({
   },
   type: {
     type: String,
-    enum: ['status_update', 'system', 'reminder'],
+    enum: ['status_update', 'system', 'reminder', 'new_complaint', 'priority_update', 'remarks_added'],
     default: 'system',
   },
   relatedComplaintId: {
