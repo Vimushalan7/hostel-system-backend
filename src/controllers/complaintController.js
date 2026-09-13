@@ -309,6 +309,10 @@ const deleteComplaint = async (req, res) => {
     // Delete history
     await ComplaintHistory.deleteMany({ complaintId: complaint._id });
 
+    // Delete related notifications
+    const Notification = require('../models/Notification');
+    await Notification.deleteMany({ relatedComplaintId: complaint._id });
+
     // Delete the complaint
     await Complaint.findByIdAndDelete(complaint._id);
 
