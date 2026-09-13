@@ -199,6 +199,15 @@ exports.updatePriority = async (req, res) => {
       newValue: priority
     });
 
+    // Notify student about priority change
+    await sendNotification({
+      userId: complaint.studentId,
+      title: '⚠️ Complaint Priority Updated',
+      message: `Your complaint (${complaint.complaintId}) priority has been changed to ${priority}.`,
+      type: 'priority_update',
+      relatedComplaintId: complaint._id,
+    });
+
     return sendSuccess(res, complaint, `Priority updated to ${priority}`);
   } catch (error) {
     console.error('Error in updatePriority:', error);
@@ -275,6 +284,15 @@ exports.addRemarks = async (req, res) => {
       performedByName: req.user.name,
       performedByRole: req.user.role,
       remarks: remarks,
+    });
+
+    // Notify student about new admin remarks
+    await sendNotification({
+      userId: complaint.studentId,
+      title: '💬 Admin Added Remarks',
+      message: `Admin responded to your complaint (${complaint.complaintId}): "${remarks.substring(0, 80)}${remarks.length > 80 ? '...' : ''}"`,
+      type: 'remarks_added',
+      relatedComplaintId: complaint._id,
     });
 
     return sendSuccess(res, complaint, 'Remarks added successfully');

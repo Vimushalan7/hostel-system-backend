@@ -1,9 +1,11 @@
 const mongoose = require('mongoose');
 const Complaint = require('../models/Complaint');
 const ComplaintHistory = require('../models/ComplaintHistory');
+const User = require('../models/User');
 const { generateComplaintId } = require('../utils/complaintIdGenerator');
 const { sendSuccess, sendError } = require('../utils/responseHelper');
 const aiService = require('../services/aiService');
+const { sendNotification } = require('../services/notificationService');
 
 /**
  * POST /api/complaints
@@ -71,6 +73,22 @@ const createComplaint = async (req, res) => {
     const populatedComplaint = await Complaint.findById(complaint._id)
       .populate('studentId', 'name email studentId phone block roomNumber profilePhoto')
       .lean();
+
+    // Notify all admin/warden users about the new complaint
+    try {
+      const admins = await User.find({ role: 'warden' }).select('_id');
+      await Promise.all(admins.map(admin =>
+        sendNotification({
+          userId: admin._id,
+          title: '🔔 New Complaint Submitted',
+          message: `${req.user.name} submitted a new complaint: "${complaint.title}" (${complaint.complaintId})`,
+          type: 'new_complaint',
+          relatedComplaintId: complaint._id,
+        })
+      ));
+    } catch (notifErr) {
+      console.warn('Admin notification failed:', notifErr.message);
+    }
 
     return sendSuccess(res, populatedComplaint, 'Complaint lodged successfully', 201);
   } catch (error) {
